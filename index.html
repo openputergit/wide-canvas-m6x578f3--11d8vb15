@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindfulBot - Mental Health Support</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f9ff;
+        }
+        .chat-container {
+            height: calc(100vh - 220px);
+        }
+        .message {
+            max-width: 80%;
+            margin: 8px;
+            padding: 12px;
+            border-radius: 15px;
+        }
+        .user-message {
+            background-color: #60a5fa;
+            color: white;
+            margin-left: auto;
+        }
+        .bot-message {
+            background-color: #e5e7eb;
+            color: #1f2937;
+        }
+        .mood-tracker {
+            transition: all 0.3s ease;
+        }
+        .mood-tracker:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">MindfulBot</h1>
+            <p class="text-gray-600">Your Mental Health Support Companion</p>
+        </header>
+
+        <div class="bg-white rounded-lg shadow-lg p-4">
+            <div id="chat-container" class="chat-container overflow-y-auto mb-4">
+                <div class="bot-message message">
+                    Hello! I'm MindfulBot, your mental health support companion. How are you feeling today?
+                </div>
+            </div>
+
+            <div class="flex gap-2">
+                <input type="text" id="user-input" 
+                    class="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    placeholder="Type your message here...">
+                <button onclick="sendMessage()" 
+                    class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition">
+                    <i class="bi bi-send"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="mood-tracker bg-white p-4 rounded-lg shadow-md text-center">
+                <i class="bi bi-emoji-smile text-3xl text-yellow-500"></i>
+                <h3 class="mt-2 font-semibold">Daily Mood Tracker</h3>
+                <select id="mood-select" class="mt-2 p-2 rounded border w-full">
+                    <option value="">How do you feel?</option>
+                    <option value="great">Great 😊</option>
+                    <option value="good">Good 🙂</option>
+                    <option value="okay">Okay 😐</option>
+                    <option value="bad">Bad 😔</option>
+                    <option value="terrible">Terrible 😢</option>
+                </select>
+            </div>
+
+            <div class="mood-tracker bg-white p-4 rounded-lg shadow-md text-center">
+                <i class="bi bi-heart-pulse text-3xl text-red-500"></i>
+                <h3 class="mt-2 font-semibold">Resources</h3>
+                <a href="#" class="block mt-2 text-blue-500 hover:underline">Find a Therapist</a>
+                <a href="#" class="block mt-1 text-blue-500 hover:underline">Crisis Hotlines</a>
+            </div>
+
+            <div class="mood-tracker bg-white p-4 rounded-lg shadow-md text-center">
+                <i class="bi bi-journal-text text-3xl text-green-500"></i>
+                <h3 class="mt-2 font-semibold">Self-Care Tips</h3>
+                <button onclick="getSelfCareTip()" class="mt-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">
+                    Get Daily Tip
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const responses = {
+            greetings: ['hello', 'hi', 'hey'],
+            anxiety: ['anxiety', 'anxious', 'worried', 'stress', 'stressed'],
+            depression: ['depression', 'depressed', 'sad', 'down', 'unhappy'],
+            suicide: ['suicide', 'suicidal', 'kill myself', 'end it all'],
+            gratitude: ['grateful', 'thankful', 'appreciate', 'blessed']
+        };
+
+        const selfCareTips = [
+            "Take deep breaths for 5 minutes",
+            "Go for a short walk outside",
+            "Write down three things you're grateful for",
+            "Drink a glass of water and stretch",
+            "Practice mindfulness for 5 minutes",
+            "Listen to your favorite calming music"
+        ];
+
+        function sendMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value.trim().toLowerCase();
+            
+            if (message === '') return;
+
+            // Add user message
+            addMessage(input.value, 'user');
+            input.value = '';
+
+            // Analyze message and respond
+            setTimeout(() => {
+                const response = analyzeMessage(message);
+                addMessage(response, 'bot');
+            }, 1000);
+        }
+
+        function analyzeMessage(message) {
+            if (responses.suicide.some(word => message.includes(word))) {
+                return "I'm very concerned about what you're saying. Please know that you're not alone. " +
+                       "Please call 988 immediately to speak with a crisis counselor. They're available 24/7 and want to help.";
+            }
+            
+            if (responses.anxiety.some(word => message.includes(word))) {
+                return "I hear that you're feeling anxious. Let's try this: Take a deep breath in for 4 counts, " +
+                       "hold for 4, and exhale for 4. Repeat this 4 times. Remember, this feeling will pass.";
+            }
+            
+            if (responses.depression.some(word => message.includes(word))) {
+                return "I'm sorry you're feeling this way. Depression can be really tough. Have you considered talking to a " +
+                       "mental health professional? They can provide valuable support and strategies to help you feel better.";
+            }
+            
+            if (responses.greetings.some(word => message.includes(word))) {
+                return "Hello! How are you feeling today? I'm here to listen and support you.";
+            }
+            
+            return "I'm here to listen and support you. Can you tell me more about what's on your mind?";
+        }
+
+        function addMessage(text, sender) {
+            const container = document.getElementById('chat-container');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            messageDiv.textContent = text;
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function getSelfCareTip() {
+            const tip = selfCareTips[Math.floor(Math.random() * selfCareTips.length)];
+            addMessage("Here's your daily self-care tip: " + tip, 'bot');
+        }
+
+        // Handle Enter key press
+        document.getElementById('user-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Handle mood tracking
+        document.getElementById('mood-select').addEventListener('change', function(e) {
+            const mood = e.target.value;
+            if (mood) {
+                addMessage(`I'm tracking that you're feeling ${mood} today.`, 'bot');
+                if (mood === 'bad' || mood === 'terrible') {
+                    addMessage("I notice you're not feeling great. Would you like to talk about it or try some relaxation exercises?", 'bot');
+                }
+            }
+        });
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
